@@ -2,7 +2,7 @@ import * as cdk from '@aws-cdk/core';
 import * as codecommit from '@aws-cdk/aws-codecommit';
 import * as codepipeline from '@aws-cdk/aws-codepipeline';
 import * as actions from '@aws-cdk/aws-codepipeline-actions';
-import { SimpleSynthAction, CdkPipeline } from '@aws-cdk/pipelines';
+import { SimpleSynthAction, CdkPipeline, ShellScriptAction } from '@aws-cdk/pipelines';
 
 import { WorkshopPipelineStage } from './pipeline-stage';
 
@@ -33,6 +33,17 @@ export class WorkshopPipelineStack extends cdk.Stack {
     });
 
     const deploy = new WorkshopPipelineStage(this, 'Deploy');
-    pipeline.addApplicationStage(deploy);
+    const deployStage = pipeline.addApplicationStage(deploy);
+    deployStage.addActions(new ShellScriptAction({
+      actionName: 'TestAPIGatewayEndpoint',
+      useOutputs: {
+        ENDPOINT_URL: pipeline.stackOutput(deploy.hcEndpoint)
+      },
+      commands: [
+        'curl -Ssf $ENDPOINT_URL/',
+        'curl -Ssf $ENDPOINT_URL/hello',
+        'curl -Ssf $ENDPOINT_URL/test'
+      ]
+    }));
   }
 }
