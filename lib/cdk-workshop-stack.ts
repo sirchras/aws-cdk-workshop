@@ -1,4 +1,4 @@
-import { App, Stack, StackProps } from '@aws-cdk/core'
+import { Construct, Stack, StackProps } from '@aws-cdk/core'
 import * as lambda from '@aws-cdk/aws-lambda'
 import * as apigw from '@aws-cdk/aws-apigateway'
 // import { TableViewer } from 'cdk-dynamo-table-viewer'
@@ -6,7 +6,7 @@ import * as apigw from '@aws-cdk/aws-apigateway'
 import { HitCounter } from './hitcounter'
 
 export class CdkWorkshopStack extends Stack {
-  constructor(scope: App, id: string, props?: StackProps) {
+  constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props)
 
     const hello = new lambda.Function(this, 'HelloHandler', {
